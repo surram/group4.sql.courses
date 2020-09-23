@@ -97,7 +97,7 @@ declare @d datetime
 select @d=doj from ADMISSIONS where sid=@sid
 return @d
 end
-	select datename(dw,dbo.retdate(sid))from students
+	select datename(dw,dbo.retdate(sid))from ADMISSIONS
 
 --10)List which courses are common for 2 or more students?
 SELECT COURSES.CID,COURSES.CNAME  FROM COURSES,ADMISSIONS 
