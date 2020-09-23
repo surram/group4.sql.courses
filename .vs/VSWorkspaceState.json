@@ -1,4 +1,10 @@
 {
-  "ExpandedNodes": [],
+  "ExpandedNodes": [
+    "",
+    "\\.git",
+    "\\Local settings (.vs)",
+    "\\Local settings (.vs)\\group4.sql.courses"
+  ],
+  "SelectedNode": "\\Local settings (.vs)",
   "PreviewInSolutionExplorer": true
 }
