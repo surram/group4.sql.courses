@@ -1,0 +1,49 @@
+--1)List the No.of students based on course wise.
+select count(SID) as No_of_Students from Admissions group by CID 
+
+--2)List the Student,Course,Admissions details which student taken some course ?
+select * from Students,Courses,Admissions where 
+Admissions.SID=Students.SID AND Admissions.CID=Courses.CID 
+
+--3)List the all Student name which students grade is ‘A’ and B’?
+select Students.SNAME ,Admissions.GRADE from Students,Admissions where GRADE in ('A','B') and Students.SID=Admissions.SID
+
+--4)List the Course details which course does not have any students?
+select * from Courses except select * from Courses where Courses.CID in(select CID from Admissions)
+
+--5)List the Fees details based on Student id which is more than 4000?
+select Students.SID,Courses.Fees from Courses,Students where Fees>4000 
+
+--7)List which course is taken maximum number of students?
+select CNAME from Courses where CID= 
+(select cid from Admissions where sid=
+(select max(SID) from Admissions where SID 
+in(select CID from Admissions group by CID)))
+
+--6)Insert,Update,Delete records into students table using Procedure?
+create proc insrt(@sid int,@sname varchar(10),@origin char,@type char)
+as
+begin
+insert into Students values(@sid,@sname,@origin,@type)
+print 'row inserted'
+end
+exec insrt 6, 'abc','f','N'
+
+create proc del(@sid int)
+as
+begin
+delete from Students where SID=@sid
+end
+exec del 6
+select * from Students
+
+create proc updaterec(@sid int,@type char)
+as 
+begin
+update Students set Type=@type where SID=@sid
+end
+exec updaterec 1,'F'
+select * from Students
+
+
+
