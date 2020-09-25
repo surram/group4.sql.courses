@@ -1,7 +1,9 @@
 --1)List the No.of students based on course wise.
 select cid,count(SID) as No_of_Students from Admissions group by CID 
+
 --List the student details which student origin Is foreign and 
 --no.of values exceeds 10?
+select * from Students where ORIGIN='F'and (select count(*) from Students)>0
 
 
 --2)List the Student,Course,Admissions details which student taken some course ?
