@@ -1,8 +1,10 @@
 --1)List the No.of students based on course wise.
 select cid,count(SID) as No_of_Students from Admissions group by CID 
+
 --List the student details which student origin Is foreign and 
 --no.of values exceeds 10?
-
+select * from Students where ORIGIN='F'and 
+origin in(select ORIGIN from Students group by origin having count(*)>2)
 
 --2)List the Student,Course,Admissions details which student taken some course ?
 select * from Students,Courses,Admissions where 
@@ -19,29 +21,20 @@ select Students.SID,Courses.Fees from Courses,Students,Admissions where Admissio
 Fees>4000 
 
 --6)Insert,Update,Delete records into students table using Procedure?
-create proc insrt(@sid int,@sname varchar(10),@origin char,@type char)
+create proc insupdeltable(@oprn int,@sid int,@sname varchar(20),@origin char(1),@type char(1))
 as
 begin
+if(@oprn=1)
 insert into Students values(@sid,@sname,@origin,@type)
-print 'row inserted'
+else if(@oprn=2)
+update Students set sid=@sid ,sname = @sname , ORIGIN =@origin , type = @type where sid=@sid
+else if(@oprn=3)
+delete from Students where sid=@sid and sname = @sname and ORIGIN =@origin and type = @type
+else
+print 'not valid oprn code select 1 for insert , 2 for update, 3 for delete '
 end
-exec insrt 6, 'abc','f','N'
-
-create proc del(@sid int)
-as
-begin
-delete from Students where SID=@sid
-end
-exec del 6
-select * from Students
-
-create proc updaterec(@sid int,@type char)
-as 
-begin
-update Students set Type=@type where SID=@sid
-end
-exec updaterec 1,'F'
-select * from Students
+	exec insupdeltable 1,6,'xyz','L','F'
+	exec insupdeltable 2,6,'xyz','F','N'
 
 --7)List which course is taken maximum number of students?
 select CNAME from Courses where CID= 
