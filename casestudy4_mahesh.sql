@@ -57,7 +57,7 @@ SELECT STUDENTS.*,COURSES.*,ADMISSIONS.*   FROM STUDENTS
 INNER JOIN ADMISSIONS ON STUDENTS.SID=ADMISSIONS.SID  
 INNER JOIN COURSES ON COURSES.CID=ADMISSIONS.CID
 
---3)List the all Student name which students grade is ‘A’ and “B’?
+--3)List the all Student name which students grade is â€˜Aâ€™ and â€œBâ€™?
 go
 select s.SNAME, a.GRADE from students s inner join Admissions a on s.sid = a.sid 
  where  a.grade  in (select grade from Admissions where grade = 'A' or grade = 'B' ) 
@@ -73,6 +73,9 @@ select * from Courses c where  cid not in (select cid from Admissions)
 select * from Courses where not exists (select cid from Admissions where Admissions.cid= courses.CID)
 
 SELECT * FROM COURSES WHERE NOT EXISTS (SELECT 1 FROM ADMISSIONS WHERE ADMISSIONS.CID=COURSES.CID)
+
+--5)List the Fees details based on Student id which is more than 4000?
+select a.SID, c.Fees  from Courses c inner join  Admissions a on c.CID = a.CID where c.Fees >4000
 
 
 --6)Insert,Update,Delete records into students table using Procedure?
@@ -108,6 +111,7 @@ HAVING count(*) =
 (SELECT MAX (mycount) FROM
 (SELECT COUNT(*) mycount FROM Admissions
 GROUP BY CID) a))
+
 
 
 	
