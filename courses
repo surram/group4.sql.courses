@@ -21,7 +21,7 @@ select Students.SID,Courses.Fees from Courses,Students,Admissions where Admissio
 Fees>4000 
 
 --6)Insert,Update,Delete records into students table using Procedure?
-create proc insertstutable(@oprn int,@sid int,@sname varchar(20),@origin char(1),@type char(1))
+create proc insupdeltable(@oprn int,@sid int,@sname varchar(20),@origin char(1),@type char(1))
 as
 begin
 if(@oprn=1)
@@ -33,8 +33,8 @@ delete from Students where sid=@sid and sname = @sname and ORIGIN =@origin and t
 else
 print 'not valid oprn code select 1 for insert , 2 for update, 3 for delete '
 end
-	exec insertstutable 1,9,'bi','L','F'
-	exec insertstutable 2,9,'bin','F','N'
+	exec insupdeltable 1,6,'xyz','L','F'
+	exec insupdeltable 2,6,'xyz','F','N'
 
 --7)List which course is taken maximum number of students?
 select CNAME from Courses where CID= 
