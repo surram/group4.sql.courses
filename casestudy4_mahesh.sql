@@ -88,7 +88,7 @@ insert into Students values(@sid,@sname,@origin,@type)
 else if(@op=2)
 update Students set sid=@sid ,sname = @sname , ORIGIN =@origin , type = @type where sid=@sid
 else if(@op=3)
-delete from Students where sid=@sid and sname = @sname and ORIGIN =@origin and type = @type
+delete from Students where sid=@sid 
 else
 print 'not valid op code select 1 for insert , 2 for update, 3 for delete '
 end
@@ -100,9 +100,6 @@ end
 	   select * from Students
 
 
-
-
-
 --7)List which course is taken maximum number of students?
 select * from Courses where CID =
 (SELECT c.CID FROM Admissions A, Courses c WHERE A.CID = c.CID
@@ -111,6 +108,42 @@ HAVING count(*) =
 (SELECT MAX (mycount) FROM
 (SELECT COUNT(*) mycount FROM Admissions
 GROUP BY CID) a))
+
+
+--8)Create trigger for admissions table if the admission is taken on ‘Sunday’
+go
+CREATE TRIGGER TR1 ON Admissions FOR INSERT AS
+ BEGIN 
+	IF DATENAME(DW,GETDATE())='SUNDAY'
+	BEGIN
+		ROLLBACK
+		RAISERROR('CANT admit student ON SUNDAY',1,1)
+	END
+ END
+
+ go
+ insert into Admissions values(7, 3 , '2020/01/19', 'A')
+
+ --9)Make function to get weekday for given Student id?
+create function weekdays(@sid int)
+returns varchar(10)
+as
+begin
+declare @doj varchar(10)
+select @doj=Datename(dw,DOJ) from Admissions where sid=@sid
+return @doj
+end
+		select(dbo.weekdaystu(sid)) from Students
+
+
+
+--10)List which courses are common for 2 or more students?
+--11)To define synonym for Students Master?
+--12)To define composite index on Doj,Grade?
+
+
+
+
 
 
 
