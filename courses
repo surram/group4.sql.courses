@@ -67,7 +67,7 @@ select dbo.retday(SID) from Admissions
 --10)List which courses are common for 2 or more students?
 select CNAME from Courses where CID in 
 (select cid from Admissions where CID in
-(select CID from Admissions group by CID having count(sid)>1))
+(select CID from Admissions group by CID having count(sid)>2))
 
 --11)To define synonym for Students Master?
 create synonym s4 for Students
