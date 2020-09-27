@@ -1,4 +1,4 @@
-
+---created by hema
 drop table Courses
 create table Courses(CID INT primary key,CNAME varchar(10) not null,shifts varchar(20) check(shifts in('Morning','Evening')),Fees smallmoney not null) 
 insert into Courses values(1,'java','Morning',18000)
