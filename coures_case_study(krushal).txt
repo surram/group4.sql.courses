@@ -60,6 +60,11 @@ SELECT CID,COUNT(SID) FROM ADMISSIONS GROUP BY CID
 
 select * from Students where 
 origin in(select ORIGIN from Students where origin ='f' group by origin having count(*)>1)
+--or--
+
+
+select * from Students where 
+origin ='f' and (select count(sid) from students where origin='f' )>=2
 
 
 
