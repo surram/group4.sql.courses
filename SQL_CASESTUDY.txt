@@ -35,10 +35,13 @@ INSERT INTO ADMISSIONS VALUES(3,5,'2020/01/05','A')
 
 SELECT * FROM ADMISSIONS
 --1)List the No.of students based on course wise.
---List the student details which student origin Is foreign and
---no.of values exceeds 10?
 SELECT CID,COUNT(SID) AS NUMBEROFSTUDENTS 
 FROM ADMISSIONS GROUP BY CID
+--List the student details which student origin Is foreign and
+--no.of values exceeds 10?
+SELECT * FROM STUDENTS WHERE ORIGIN LIKE 'F' AND 
+(SELECT COUNT(SID) FROM STUDENTS WHERE ORIGIN LIKE 'F')>1
+
 
 --2)List the Student,Course,Admissions details which student
 --taken some course ?
