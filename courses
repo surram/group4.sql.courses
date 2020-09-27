@@ -1,0 +1,77 @@
+--1)List the No.of students based on course wise.
+select cid,count(SID) as No_of_Students from Admissions group by CID 
+
+--List the student details which student origin Is foreign and 
+--no.of values exceeds 10?
+select * from Students where ORIGIN='F'and 
+origin in(select ORIGIN from Students group by origin having count(*)>2)
+
+--2)List the Student,Course,Admissions details which student taken some course ?
+select * from Students,Courses,Admissions where 
+Admissions.SID=Students.SID AND Admissions.CID=Courses.CID 
+
+--3)List the all Student name which students grade is ‘A’ and B’?
+select Students.SNAME ,Admissions.GRADE from Students,Admissions where GRADE in ('A','B') and Students.SID=Admissions.SID
+
+--4)List the Course details which course does not have any students?
+select * from Courses except select * from Courses where Courses.CID in(select CID from Admissions)
+
+--5)List the Fees details based on Student id which is more than 4000?
+select Students.SID,Courses.Fees from Courses,Students,Admissions where Admissions.SID=Students.SID AND Admissions.CID=Courses.CID AND
+Fees>4000 
+
+--6)Insert,Update,Delete records into students table using Procedure?
+create proc insupdeltable(@oprn int,@sid int,@sname varchar(20),@origin char(1),@type char(1))
+as
+begin
+if(@oprn=1)
+insert into Students values(@sid,@sname,@origin,@type)
+else if(@oprn=2)
+update Students set sid=@sid ,sname = @sname , ORIGIN =@origin , type = @type where sid=@sid
+else if(@oprn=3)
+delete from Students where sid=@sid and sname = @sname and ORIGIN =@origin and type = @type
+else
+print 'not valid oprn code select 1 for insert , 2 for update, 3 for delete '
+end
+	exec insupdeltable 1,6,'xyz','L','F'
+	exec insupdeltable 2,6,'xyz','F','N'
+
+--7)List which course is taken maximum number of students?
+select CNAME from Courses where CID= 
+(select cid from Admissions where sid=
+(select max(SID) from Admissions where SID 
+in(select CID from Admissions group by CID )))
+
+--8)Create trigger for admissions table if the admission is taken on ‘Sunday’
+create trigger tr on Admissions for insert,delete,update
+as
+begin
+if DATENAME(dw,GetDate())='sunday'
+begin
+rollback
+Raiserror('can not insert or update or delete on sunday',1,1)
+end
+end 
+
+--9)Make function to get weekday for given Student id?
+create function retday(@sid int)
+returns varchar(10)
+as
+begin
+ declare @day varchar(10)
+select @day=DATENAME(dw,DOJ) from Admissions where SID=@sid
+return @day
+end
+select dbo.retday(SID) from Admissions
+
+--10)List which courses are common for 2 or more students?
+select CNAME from Courses where CID in 
+(select cid from Admissions where CID in
+(select CID from Admissions group by CID having count(sid)>2))
+
+--11)To define synonym for Students Master?
+create synonym s4 for Students
+select * from s4
+
+--12)To define composite index on Doj,Grade?
+create index i on Admissions (DOJ,GRADE)
