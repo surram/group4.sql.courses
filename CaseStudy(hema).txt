@@ -123,16 +123,10 @@ end
 	  exec deletestutable @id
 
 --7)List which course is taken maximum number of students?
-select CNAME from courses  where cid=(select cid from Admissions where sid=
-(select max(students) from(select max(sid) as students from Admissions group by cid having count(sid)>0) abc))
-(or)
-select CNAME from courses  where cid=(select cid from Admissions where sid=
-(select max(sid) from Admissions where cid in(select cid as students from Admissions group by cid having count(sid)>0)))
-(or)
-select CNAME from Courses where CID= 
-(select cid from Admissions where sid=
-(select max(SID) from Admissions where sid
-in(select CID from Admissions group by CID)))
+SELECT * FROM COURSES WHERE CID=(SELECT C.CID FROM ADMISSIONS A,COURSES C WHERE A.CID=C.CID 
+GROUP BY C.CID HAVING COUNT(A.SID)=
+(SELECT MAX(COUNT_SID)FROM (SELECT COUNT(SID) COUNT_SID FROM Admissions GROUP BY CID) Adm))
+
 
 --8)Create trigger for admissions table if the admission is taken on ‘Sunday’
 create trigger addmtable
