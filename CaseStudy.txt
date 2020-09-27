@@ -1,5 +1,3 @@
---hema
-
 
 drop table Courses
 create table Courses(CID INT primary key,CNAME varchar(10) not null,shifts varchar(20) check(shifts in('Morning','Evening')),Fees smallmoney not null) 
@@ -49,10 +47,6 @@ except
 select Courses.* from Courses,Students,Admissions where Courses.CID=Admissions.CID and Students.SID=Admissions.SID
 --(or)
 select * from Courses where cid not in(select cid from Admissions where sid in(select sid from Students))
---(or)
-select * from courses where cid   
-
-
 
 --5th
 select Students.SID,Courses.Fees from Students,Courses,Admissions where Students.SID=Admissions.SID and Courses.CID=Admissions.CID and Courses.Fees>4000
@@ -63,13 +57,13 @@ create proc insertstutable(@op int,@sid int,@sname varchar(20),@origin char(1),@
 as
 begin
 if(@op=1)
-insert into Students(@sid,@sname) values(@sid,@sname,@origin,@type)
+insert into Students values(@sid,@sname,@origin,@type)
 else if(@op=2)
 update Students set TYPE=@type where sid=@sid
 else if(@op=3)
 delete from Students where sid=@sid
 else
-print 'not '
+print 'not valid data'
 end
 		exec insertstutable 3,8,'GHHJ','Y','N'
        exec insertstutable 1,7,'bindu','F','F'
@@ -153,20 +147,13 @@ end
 		select(dbo.weekdaystu(sid)) from Students
 
 --10th
-select cname from courses where cid=(select cid from Admissions group by cid having count(sid)>2)
+select * from courses where cid=(select cid from Admissions group by cid having count(sid)>2)
 
 --11th
 create synonym sysforstudent for Students
 
 --12th
-
-
-
-
-
-
-
-
+create nonclustered index i1 on Admissions(Doj,Grade)
 
 
 
