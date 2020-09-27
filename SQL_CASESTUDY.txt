@@ -70,6 +70,27 @@ SELECT STUDENTS.SID,COURSES.CID,COURSES.CNAME, COURSES.FEES FROM COURSES INNER J
  COURSES.CID=ADMISSIONS.CID 
 INNER JOIN STUDENTS ON STUDENTS.SID=ADMISSIONS.SID WHERE FEES>4000 
 
+--6)Insert,Update,Delete records into students table using Procedure?
+go
+create proc insertstutable(@op int,@sid int,@sname varchar(20),@origin char(1),@type char(1))
+as
+begin
+if(@op=1)
+insert into Students values(@sid,@sname,@origin,@type)
+else if(@op=2)
+update Students set sid=@sid ,sname = @sname , ORIGIN =@origin , type = @type where sid=@sid
+else if(@op=3)
+delete from Students where sid=@sid 
+else
+print 'not valid op code select 1 for insert , 2 for update, 3 for delete '
+end
+
+		go
+		exec insertstutable 1,5,'NITYA','L','F'
+		exec insertstutable 2,5,'NITYA','F','N'
+       exec insertstutable 3,5,'NITYA','F','N'
+	   select * from Students
+
 --7)List which course is taken maximum number of students?
 SELECT * FROM COURSES WHERE CID IN(
 SELECT C.CID FROM ADMISSIONS A,COURSES C WHERE 
@@ -81,7 +102,7 @@ A.CID=C.CID GROUP BY C.CID HAVING COUNT(*)=
 
 CREATE TRIGGER TR1
 ON ADMISSIONS
-FOR INSERT,DELETE
+FOR INSERT
 AS 
 BEGIN
   IF DATENAME(DW,GETDATE())='SUNDAY'
@@ -94,15 +115,15 @@ BEGIN
 INSERT INTO ADMISSIONS(DOJ,GRADE)VALUES('2020/01/05','A')
 
 --9)Make function to get weekday for given Student id?
-create function retdate(@sid int)
-returns datetime
-as
-begin
-declare @d datetime
-select @d=doj from ADMISSIONS where sid=@sid
-return @d
-end
-	select datename(dw,dbo.retdate(sid))from ADMISSIONS
+create FUNCTION GETWEEKDAY(@SID INT)
+RETURNS VARCHAR(20)
+BEGIN
+DECLARE @DAY VARCHAR(20)
+SELECT @DAY=DATENAME(DW,DOJ) FROM ADMISSIONS WHERE SID=@SID
+RETURN @DAY
+END
+
+SELECT dbo.GETWEEKDAY(1)
 
 --10)List which courses are common for 2 or more students?
 SELECT COURSES.CID,COURSES.CNAME  FROM COURSES,ADMISSIONS 
@@ -112,3 +133,7 @@ GROUP BY COURSES.CID,COURSES.CNAME HAVING COUNT(COURSES.CID)>=2;
 --11)To define synonym for Students Master?
 CREATE SYNONYM S1 FOR STUDENTS
 SELECT * FROM S1
+
+--12)To define composite index on Doj,Grade?
+CREATE NONCLUSTERED INDEX I1 ON ADMISSIONS(DOJ,GRADE)
+
