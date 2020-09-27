@@ -1,0 +1,227 @@
+use ramya
+--creating table for courses master table
+create table coursestable(cid int PRIMARY KEY,cname varchar(10) NOT NULL,shift varchar(20) check(shift in('morning', 'evening')),fees smallmoney NOT NULL)
+insert into coursestable values(1,'ramya','morning',200000)
+insert into coursestable values(2,'kavya','evening',30000)
+insert into coursestable values(3,'shruthi','morning',40000)
+insert into coursestable values(4,'madhu','evening',50000)
+insert into coursestable values(5,'soumya','evening',60000)
+insert into coursestable values(6,'madhumitha','morning',65000)
+update coursestable set cname='c' where cid=1
+update coursestable set cname='c++' where cid=2
+update coursestable set cname='java' where cid=3
+update coursestable set cname='c' where cid=4
+update coursestable set cname='sql' where cid=5
+update coursestable set cname='java' where cid=6
+select *  from coursestable
+--creating table for Studentsmaster
+create table studentsmaster(sid int PRIMARY KEY,sname varchar(10) NOT NULL,origin char(1) CHECK(origin in('local','foreign')),type char(1) CHECK(type in('normal' ,'fast')))
+sp_helpconstraint 'studentsmaster'
+--alter table Studentsmaster drop constraint ck_studentsmaster_type
+sp_help Studentsmaster
+sp_helpconstraint 'studentsmaster'
+ALTER TABLE Studentsmaster
+ADD CONSTRAINT origincheck
+CHECK(origin in('l','f'))
+Alter table  studentsmaster drop constraint CK__studentsma__type__0D7A0286
+ALTER TABLE Studentsmaster
+ADD CONSTRAINT type
+CHECK(type in('n','f'))
+alter table studentsmaster drop constraint checktype
+insert into studentsmaster values(100,'ramya','f','f')
+select * from studentsmaster 
+update studentsmaster set sid=1 where sname='ramya'
+insert into studentsmaster values(102,'kavya','l','n')
+insert into studentsmaster values(103,'shruthi','l','n')
+insert into studentsmaster values(104,'madhu','f','n')
+insert into studentsmaster values(105,'soumya','l','f')
+insert into studentsmaster values(106,'madhumitha','f','f')
+update studentsmaster set sid=1 where sname='ramya'
+update studentsmaster set sid=2 where sname='kavya'
+update studentsmaster set sid=3 where sname='shruthi'
+update studentsmaster set sid=4 where sname='madhu'
+update studentsmaster set sid=5 where sname='soumya'
+update studentsmaster set sid=6 where sname='madhumitha'
+--creating table for admissions
+create table Admissions(sid int foreign key References studentsmaster(sid),cid int foreign key References coursestable(cid),DOJ datetime check(DOJ between '2020/01/01' AND '2020/01/20'), GRADE char(1) check(Grade in('A','B','C')))
+insert into Admissions values(101,1,'2020/01/10','A')
+insert into Admissions values(102,2,'2020/01/15','B')
+insert into Admissions values(102,3,'2020/01/10','A')
+insert into Admissions values(104,4,'2020/01/12','A')
+insert into Admissions values(105,5,'2020/01/10','C')
+insert into Admissions values(106,6,'2020/01/10','C')
+select * from Admissions
+drop table admissions
+create table Admissions(sid int foreign key References studentsmaster(sid),cid int foreign key References coursestable(cid),DOJ datetime check(DOJ between '2020/01/01' AND '2020/01/20'), GRADE char(1) check(Grade in('A','B','C')))
+insert into Admissions values(1,1,'2020/01/10','A')
+insert into Admissions values(2,2,'2020/01/15','B')
+insert into Admissions values(3,2,'2020/01/10','A')
+insert into Admissions values(4,3,'2020/01/12','A')
+insert into Admissions values(5,2,'2020/01/10','C')
+insert into admissions values(6,4,'2020/01/11','A')
+select * from coursestable
+--inner join(equi join)
+select s.sid,s.sname,s.origin,s.type,c.cid,c.cname,c.shift,c.fees from coursestable c,studentsmaster s where c.cid=s.sid
+select c.cname,count(c.cname) as noofstudents from  coursestable c group by c.cname with rollup
+select * from studentsmaster where origin='f'
+-- sub quries
+select * from studentsmaster
+
+--1st query 
+select * from Studentsmaster where 
+origin ='f' and (select count(sid) from studentsmaster where origin='f' )>=2
+--or
+select * from studentsmaster where origin in (select origin from studentsmaster where  origin='f' group by origin having count(origin)>3) 
+--practice
+select * from studentsmaster where sname=(select sname,count(type) from studentsmaster where type='f' and sname=(select sname from studentsmaster where sname like 'r%'))
+select c.cname,count(c.cname) from coursestable c inner join studentsmaster s on c.cid=s.sid where type='f'  group by c.cname having count(*)>0
+delete from studentsmaster where sid=101
+delete from studentsmaster where sid=102
+--2 rd query
+select studentsmaster.*,coursestable.*,Admissions.* from  studentsmaster  inner join coursestable on  studentsmaster.sid=coursestable.cid inner join  admissions on coursestable.cid=Admissions.cid
+--3 rd query
+select studentsmaster.sname from  studentsmaster  inner join   admissions on studentsmaster.sid=Admissions.sid where grade='a' or grade='b'
+--or
+SELECT SNAME FROM STUDENTSMASTER WHERE SID IN(SELECT SID FROM ADMISSIONS WHERE GRADE IN('A','B'))
+
+-- 5 th query based on courses and students
+select s.sid,s.sname,s.origin,s.type,c.cid,c.cname,c.shift,c.fees from coursestable c inner join studentsmaster s on  c.cid=s.sid where  c.fees>40000
+--5th acutual based on real time
+select studentsmaster.* from  studentsmaster  inner join coursestable on  studentsmaster.sid=coursestable.cid inner join  admissions on coursestable.cid=Admissions.cid where coursestable.fees>4000
+--11 querye 
+create synonym  m for  studentsmaster
+select * from m
+--6th query using tsql
+
+declare @sid int,@sname varchar(10),@origin char(1),@type char(1)
+set @sid=7
+set @sname='rama'
+set @origin='l'
+set @type='f'
+insert into  studentsmaster values(@sid,@sname,@origin,@type)
+print cast(@sid as varchar)+' '+@sname+' '+@origin+' '+@type
+select * from studentsmaster
+-- update
+declare @sid int,@sname varchar(10)
+set @sid=6
+set @sname='nithya'
+update studentsmaster set sname=@sname where sid=@sid
+print cast(@sid as varchar)+' '+@sname
+select * from studentsmaster
+--delete 
+declare @sid int
+set @sid=7
+delete from studentsmaster where sid=@sid
+select * from studentsmaster
+--6th query using procedure
+--inserting records through procedure
+create  proc pi(@sid int,@sname varchar(10),@origin char(1),@type char(1))
+as 
+begin 
+insert into studentsmaster(sid,sname,origin,type) values(@sid ,@sname,@origin,@type )
+print 'row inserted'
+end
+exec pi 8,'keerthana','l','n'
+select * from studentsmaster
+--update record through procedure
+create proc pcrd (@sid int,@sname varchar(10))
+as
+begin
+update studentsmaster set sname=@sname where sid=@sid
+print 'row updated'
+end
+   exec pcrd  6,'ramya'
+--delete 
+create proc pc (@sid int)
+as
+begin
+delete from studentsmaster where sid=@sid
+print 'row updated'
+end
+exec pc 7
+select * from studentsmaster
+--7th
+select c.cname,count(c.cname)  from  coursestable c group by c.cname with rollup having count(c.cname)>1
+
+--9th  without passing sid
+select * from admissions
+create function l()
+returns table
+as
+return(select doj from admissions)
+
+ select datename(dw,(doj)) from l()
+ select datepart(dw,(doj)) from l()
+ --9th  passing sid
+ create FUNCTION GETWEEKDAY(@SID INT)
+RETURNS VARCHAR(20)
+BEGIN
+DECLARE @DAY VARCHAR(20)
+SELECT @DAY=DATENAME(DW,DOJ) FROM ADMISSIONS WHERE SID=@SID
+RETURN @DAY
+END
+ select dbo.GETWEEKDAY(5)
+ --10th
+
+select * from coursestable where cid in (select distinct a1.cid from ADMISSIONS a1, ADMISSIONS a2 where a1.CID=a2.CID and a1.SID!=a2.SID) 
+ --4th
+ insert into studentsmaster values(7,'trump','l','f')
+ insert into coursestable values(8,'html','morning',2000)
+  select cname from coursestable where cname not in( select cname from studentsmaster s,coursestable c where s.sid=c.cid )
+
+ -- 6TH QUERY USING ONE PROCEDURE
+
+ create  proc stupro (@alter nvarchar(20),@sid int=null,@sname nvarchar(10)=null,@origin char(1)=null,@type char(1)=null)
+as 
+begin 
+   if @alter='insert'
+   begin
+   insert into studentsmaster(sid,sname,origin,type) values(@sid ,@sname,@origin,@type )
+    print 'row inserted'
+    end
+    if @alter='update'
+	begin
+	update studentsmaster set sname=@sname where sid=@sid
+	end
+    if  @alter ='delete'
+	begin
+	 delete  from studentsmaster where sid=@sid
+	 end
+	 if @alter ='select'
+	 begin
+	 select * from studentsmaster
+	 end
+end
+ 
+ exec dbo.stupro @alter='delete' ,@sid=8
+ go
+ select * from studentsmaster
+ exec dbo.stupro @alter='insert' ,@sid=8,@sname='keerthana',@origin='f',@type='n'
+ go
+ select * from studentsmaster
+
+ exec dbo.stupro @alter='update' ,@sid=8,@sname='kcr'
+ go
+ select * from studentsmaster
+
+  exec dbo.stupro @alter='select'
+
+ -- 8th
+  create trigger tr on Admissions for insert,delete,update
+as
+begin
+if DATENAME(dw,GetDate())='sunday'
+begin
+rollback
+Raiserror('can not insert or update or delete on sunday',1,1)
+end
+end
+--12th
+create index i on Admissions (DOJ,GRADE)
+ 
+--7th
+SELECT * FROM COURSEStable  WHERE CID=(SELECT C.CID FROM ADMISSIONS A,COURSEStable  C WHERE A.CID=C.CID 
+GROUP BY C.CID HAVING COUNT(A.SID)=
+(SELECT MAX(COUNT_SID)FROM (SELECT COUNT(SID) COUNT_SID FROM ADMISSIONS GROUP BY CID) ADMISSIONS))
+    --or
+select * from coursestable where cid =(select cid from ADMISSIONS group by cid having count(sid)>2)
