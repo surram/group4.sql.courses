@@ -49,7 +49,8 @@ select Courses.* from Courses,Students,Admissions where Courses.CID=Admissions.C
 select * from Courses where cid not in(select cid from Admissions where sid in(select sid from Students))
 
 --5th
-select Students.SID,Courses.Fees from Students,Courses,Admissions where Students.SID=Admissions.SID and Courses.CID=Admissions.CID and Courses.Fees>4000
+select Students.SID,Courses.Fees from Students,Courses,Admissions where Students.SID=Admissions.SID
+and Courses.CID=Admissions.CID and Courses.Fees>4000
 
 --6th
 drop proc insertstutable
@@ -108,14 +109,13 @@ end
 
 --7th
 
---select cname from Courses e where cid=(select max(cid) from Admissions group by cid)
---select cname from Courses where cid=(select cid from Students,Admissions where Students.SID=Admissions.SID group by cname having max(count(*)) 
+
 select CNAME from courses  where cid=(select cid from Admissions where sid=
 (select max(students) from(select max(sid) as students from Admissions group by cid having count(sid)>0) abc))
-
+(or)
 select CNAME from courses  where cid=(select cid from Admissions where sid=
 (select max(sid) from Admissions where cid in(select cid as students from Admissions group by cid having count(sid)>0)))
-
+(or)
 select CNAME from Courses where CID= 
 (select cid from Admissions where sid=
 (select max(SID) from Admissions where sid
@@ -147,7 +147,7 @@ end
 		select(dbo.weekdaystu(sid)) from Students
 
 --10th
-select * from courses where cid=(select cid from Admissions group by cid having count(sid)>2)
+select * from courses where cid=(select cid from Admissions group by cid having count(sid)>=2)
 
 --11th
 create synonym sysforstudent for Students

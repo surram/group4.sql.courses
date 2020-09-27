@@ -159,7 +159,8 @@ SELECT dbo.GETWEEKDAY(1)
 
 --10)List which courses are common for 2 or more students?
 
-select * from courses where cid in (select distinct a1.cid from ADMISSIONS a1, ADMISSIONS a2 where a1.CID=a2.CID and a1.SID!=a2.SID)
+select * from courses where cid in (select distinct a1.cid from ADMISSIONS a1, ADMISSIONS a2 where a1.CID=a2.CID 
+and a1.SID!=a2.SID)
 
 --or--
 
