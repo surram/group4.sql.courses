@@ -1,3 +1,39 @@
+---Written by Dhanasri
+---Courses Table Creation
+create table Courses(CID INT primary key,CNAME varchar(10) not null,shifts varchar(20) check(shifts in('Morning','Evening')),Fees smallmoney not null) 
+insert into Courses values(1,'java','Morning',18000)
+insert into Courses values(2,'Sql','Morning',18000.5790)
+insert into Courses values(3,'.Net','Evening',20000)
+insert into Courses values(4,'webTech','Evening',15000)
+insert into Courses values(5,'html','Morning',1000)
+insert into Courses values(6,'c','Morning',10000)
+
+
+select * from Courses
+
+--Students Table Creation
+
+create table Students(SID INT primary key,SNAME varchar(10) not null,ORIGIN char(1) check(ORIGIN IN('L','F')),TYPE char(1) check(TYPE IN('N','F')))
+insert into Students values(1,'Hema','L','N')
+insert into Students values(2,'Ramya','F','F')
+insert into Students values(3,'Dhanasri','F','F')
+insert into Students values(4,'Nitya','F','F')
+insert into Students values(5,'Navya','L','F')
+insert into Students values(6,'jaya','L','F')
+
+select * from Students
+
+--Admissions Table Creation
+
+create table Admissions(SID INT foreign key References Students(SID),CID INT foreign key References Courses(CID),DOJ datetime check(DOJ>='2020/01/01' AND DOJ<='2020/01/20'),GRADE char(1) check(Grade in('A','B','C')))
+insert into Admissions values(1,1,'2020/01/10','A')
+insert into Admissions values(2,2,'2020/01/15','B')
+insert into Admissions values(3,2,'2020/01/10','A')
+insert into Admissions values(4,3,'2020/01/12','A')
+insert into Admissions values(5,2,'2020/01/10','C')
+insert into Admissions values(6,3,'2020/01/10','C')
+select * from Admissions
+
 --1)List the No.of students based on course wise.
 select cid,count(SID) as No_of_Students from Admissions group by CID 
 
@@ -66,7 +102,6 @@ select dbo.retday(SID) from Admissions
 
 --10)List which courses are common for 2 or more students?
 select CNAME from Courses where CID in 
-(select cid from Admissions where CID in
 (select CID from Admissions group by CID having count(sid)>2))
 
 --11)To define synonym for Students Master?
