@@ -67,7 +67,8 @@ select * from studentsmaster where origin='f'
 -- sub quries
 select * from studentsmaster
 
---1st query 
+--1st query
+select cid,count(sid) as students from Admissions group by cid
 select * from Studentsmaster where 
 origin ='f' and (select count(sid) from studentsmaster where origin='f' )>=2
 --or
