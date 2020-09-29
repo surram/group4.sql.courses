@@ -168,6 +168,9 @@ select * from coursestable where cid in (select distinct a1.cid from ADMISSIONS 
  --4th
  insert into studentsmaster values(7,'trump','l','f')
  insert into coursestable values(8,'html','morning',2000)
+
+ select * from Coursestable c where  cid not in (select cid from Admissions) 
+ --pratice
   select cname from coursestable where cname not in( select cname from studentsmaster s,coursestable c where s.sid=c.cid )
 
  -- 6TH QUERY USING ONE PROCEDURE
