@@ -59,10 +59,11 @@ SELECT * from STUDENTS WHERE ORIGIN IN
 
 --2)List the Student,Course,Admissions details which student
 --taken some course ?
+--ANSII
 SELECT STUDENTS.*,COURSES.*,ADMISSIONS.* FROM STUDENTS 
 INNER JOIN ADMISSIONS ON STUDENTS.SID=ADMISSIONS.SID 
 INNER JOIN COURSES ON COURSES.CID=ADMISSIONS.CID
-
+--NON-ANSII
 SELECT * FROM STUDENTS,COURSES,ADMISSIONS WHERE 
 ADMISSIONS.SID=STUDENTS.SID AND ADMISSIONS.CID=COURSES.CID 
 
@@ -102,7 +103,7 @@ end
 		go
 		exec insertstutable 1,5,'NITYA','L','F'
 		exec insertstutable 2,5,'NITYA','F','N'
-       exec insertstutable 3,5,'NITYA','F','N'
+                exec insertstutable 3,5,'NITYA','F','N'
 	   select * from Students
 
 --7)List which course is taken maximum number of students?
