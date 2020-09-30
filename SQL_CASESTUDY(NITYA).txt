@@ -45,14 +45,17 @@ INSERT INTO ADMISSIONS VALUES(2,2,'2020/01/08','A')
 SELECT * FROM ADMISSIONS
 
 --1)List the No.of students based on course wise.
+--GROUP BY
 SELECT CID,COUNT(SID) AS NUMBEROFSTUDENTS 
 FROM ADMISSIONS GROUP BY CID
 
 --List the student details which student origin Is foreign and
 --no.of values exceeds 10?
+--SUB QUERY
 SELECT * FROM STUDENTS WHERE ORIGIN LIKE 'F' AND 
 (SELECT COUNT(SID) FROM STUDENTS WHERE ORIGIN LIKE 'F')>10
 
+--SUB QUERY WITH GROUP BY
 SELECT * from STUDENTS WHERE ORIGIN IN
 (SELECT ORIGIN from STUDENTS WHERE ORIGIN ='F' GROUP BY ORIGIN HAVING COUNT(*)>10)
 
@@ -69,12 +72,14 @@ ADMISSIONS.SID=STUDENTS.SID AND ADMISSIONS.CID=COURSES.CID
 
 
 --3)List the all Student name which students grade is ‘A’ and “B’?
+--SUB QUERY WITH IN
 SELECT SNAME FROM STUDENTS WHERE SID 
 IN(SELECT SID FROM ADMISSIONS WHERE GRADE IN('A','B'))
 
 --4)List the Course details which course does not have any
 --students?
 
+--SUB QUERY WITH NON EXISTS
 SELECT * FROM COURSES WHERE NOT EXISTS
 (SELECT 1 FROM ADMISSIONS WHERE ADMISSIONS.CID=COURSES.CID)
 
@@ -82,10 +87,12 @@ SELECT * FROM COURSES WHERE NOT EXISTS
 
 --5)List the Fees details based on Student id which is more than
 --4000?
+--INNER JOIN
 SELECT ADMISSIONS.SID ,COURSES.FEES FROM ADMISSIONS INNER JOIN
  COURSES ON ADMISSIONS.CID=COURSES.CID AND COURSES.FEES >4000
 
 --6)Insert,Update,Delete records into students table using Procedure?
+--PROCEDURE WITH INPUT ARGUMENTS
 go
 create proc insertstutable(@op int,@sid int,@sname varchar(20),@origin char(1),@type char(1))
 as
@@ -107,6 +114,7 @@ end
 	   select * from Students
 
 --7)List which course is taken maximum number of students?
+--NESTED SUB-QUERY
 SELECT * FROM COURSES WHERE CID IN(
 SELECT C.CID FROM ADMISSIONS A,COURSES C WHERE 
 A.CID=C.CID GROUP BY C.CID HAVING COUNT(*)=
@@ -130,6 +138,7 @@ BEGIN
 
 
 --9)Make function to get weekday for given Student id?
+--FUNCTION WITH ONE ARGUMENT
 create FUNCTION GETWEEKDAY(@SID INT)
 RETURNS VARCHAR(20)
 BEGIN
@@ -141,10 +150,11 @@ END
 SELECT dbo.GETWEEKDAY(1)
 
 --10)List which courses are common for 2 or more students?
+--INNER JOIN
 SELECT COURSES.CID,COURSES.CNAME  FROM COURSES,ADMISSIONS 
  WHERE COURSES.CID=ADMISSIONS.CID 
 GROUP BY COURSES.CID,COURSES.CNAME HAVING COUNT(COURSES.CID)>=2;
-
+--SUB QUERY
 select * from courses where cid IN
 (select cid from Admissions group by cid having count(sid)>=2)
 
@@ -153,6 +163,7 @@ CREATE SYNONYM S1 FOR STUDENTS
 SELECT * FROM S1
 
 --12)To define composite index on Doj,Grade?
+--NONCLUSTERED INDEX
 CREATE NONCLUSTERED INDEX I1 ON ADMISSIONS(DOJ,GRADE)
 
 
